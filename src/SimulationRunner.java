@@ -4,11 +4,14 @@ import java.util.Scanner;
 
 public class SimulationRunner {
     public static void main(String[] args) {
-        try (Scanner s = new Scanner(new File(System.getProperty("user.dir") + "/data/initial-collectors-0.csv"), "UTF-8")) {
-            // Benutzen Sie das Scanner-Objekt s hier um das Netzwerk zu initialisieren
-        } catch (FileNotFoundException e) {
-            // initial-collectors-0.csv wurde nicht gefunden
-            System.exit(1);
+        for (int i = 0; i < 6; i++) {
+            Trie trie = new Trie();
+            try (Scanner s = new Scanner(new File("./data/initial-collectors-" + i + ".csv"), "UTF-8").useDelimiter(";")) {
+
+            } catch (FileNotFoundException e) {
+                System.out.println("initial-collectors-" + i + ".csv wurde nicht gefunden");
+                System.exit(1);
+            }
         }
     }
 }
