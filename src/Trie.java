@@ -12,7 +12,7 @@ public class Trie {
     private String lastDeactivated;
     private String lastActivated;
 
-    public static TrieNode getCollector(String id, TrieNode root) {
+    private static TrieNode getCollector(String id, TrieNode root) {
         TrieNode collector = root;
         for (int i = 0; i < id.length(); i++) {
             TrieNode previous = collector;
@@ -22,7 +22,7 @@ public class Trie {
         return collector;
     }
 
-    public static ArrayList<TrieNode> toList(TrieNode root) {
+    private static ArrayList<TrieNode> toList(TrieNode root) {
         ArrayList<TrieNode> list = new ArrayList<>();
         for (TrieNode value : root.children.values()) {
             if (value.ID != null) list.add(value);
