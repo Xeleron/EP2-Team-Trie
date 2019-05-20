@@ -5,7 +5,6 @@ import java.util.TreeMap;
 
 public class Trie {
     private final TrieNode root = new TrieNode();
-    private final Map<String, Integer> activityMap = new TreeMap<>();
     private int currentSize;
     private int maximumSize;
     private int minimumSize;
@@ -62,6 +61,7 @@ public class Trie {
         TrieNode collector = getCollector(id, root);
         collector.totalRequests++;
         collector.partialRequests++;
+        collector.used = true;
         totalNetworkRequests++;
         if (collector.totalRequests >= 1000) {
             delete(collector.ID, root);
@@ -74,13 +74,13 @@ public class Trie {
             minimumSize--;
             lastActivated = id;
         }
-        if (totalNetworkRequests % 500000 == 0) disableInactive();
+        if (totalNetworkRequests % 500000 == 0) disableInactiveCollectors();
     }
 
-    private void disableInactive() {
+    private void disableInactiveCollectors() {
         for (TrieNode node : toList(root))
-            if (node.totalRequests == activityMap.getOrDefault(node.ID, 0)) delete(node.ID, root);
-            else activityMap.put(node.ID, node.totalRequests);
+            if (node.used) node.used = false;
+            else delete(node.ID, root);
     }
 
     public int getMinimumSize() {
@@ -104,5 +104,6 @@ public class Trie {
         private String ID;
         private int totalRequests;
         private int partialRequests;
+        private boolean used;
     }
 }
