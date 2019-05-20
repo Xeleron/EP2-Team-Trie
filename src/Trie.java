@@ -23,15 +23,6 @@ public class Trie {
         return collector;
     }
 
-    public static boolean delete(String id, TrieNode root) {
-        if (id.length() == 1) {
-            root.children.remove(id.charAt(0));
-            return root.children.isEmpty();
-        }
-        if (delete(id.substring(1), root.children.get(id.charAt(0)))) root.children.remove(id.charAt(0));
-        return root.children.isEmpty();
-    }
-
     public static ArrayList<TrieNode> toList(TrieNode root) {
         ArrayList<TrieNode> list = new ArrayList<>();
         for (TrieNode value : root.children.values()) {
@@ -46,6 +37,16 @@ public class Trie {
         return iterator.hasNext() ? getFirstCollector(iterator.next().getValue()) : root;
     }
 
+    public boolean delete(String id, TrieNode root) {
+        if (id.length() == 1) {
+            root.children.remove(id.charAt(0));
+            minimumSize = Math.min(--currentSize, minimumSize);
+            return root.children.isEmpty();
+        }
+        if (delete(id.substring(1), root.children.get(id.charAt(0)))) root.children.remove(id.charAt(0));
+        return root.children.isEmpty();
+    }
+
     public void add(String id, int totalRequests, int partialRequests) {
         TrieNode current = root;
         for (int i = 0; i < id.length(); i++)
@@ -53,8 +54,7 @@ public class Trie {
         current.ID = id;
         current.totalRequests = totalRequests;
         current.partialRequests = partialRequests;
-        currentSize++;
-        maximumSize++;
+        maximumSize = Math.max(++currentSize, maximumSize);
         minimumSize++;
     }
 
@@ -67,26 +67,20 @@ public class Trie {
             delete(collector.ID, root);
             lastDeactivated = collector.ID;
             add(id, 0, 0);
+            minimumSize = Math.min(currentSize, minimumSize - 1);
         } else if (collector.partialRequests >= 250) {
             collector.partialRequests = 0;
             add(id, 0, 0);
-            currentSize++;
-            maximumSize = Math.max(currentSize, maximumSize);
+            minimumSize = Math.min(currentSize, minimumSize - 1);
             lastActivated = id;
         }
         if (totalNetworkRequests % 500000 == 0) disableInactive();
     }
 
     private void disableInactive() {
-        for (TrieNode node : toList(root)) {
-            if (node.totalRequests == activityMap.getOrDefault(node.ID, 0)) {
-                currentSize--;
-                minimumSize = Math.min(currentSize, minimumSize);
-                delete(node.ID, root);
-            } else {
-                activityMap.put(node.ID, node.totalRequests);
-            }
-        }
+        for (TrieNode node : toList(root))
+            if (node.totalRequests == activityMap.getOrDefault(node.ID, 0)) delete(node.ID, root);
+            else activityMap.put(node.ID, node.totalRequests);
     }
 
     public int getMinimumSize() {
