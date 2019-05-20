@@ -67,11 +67,11 @@ public class Trie {
             delete(collector.ID, root);
             lastDeactivated = collector.ID;
             add(id, 0, 0);
-            minimumSize = Math.min(currentSize, minimumSize - 1);
+            minimumSize--;
         } else if (collector.partialRequests >= 250) {
             collector.partialRequests = 0;
             add(id, 0, 0);
-            minimumSize = Math.min(currentSize, minimumSize - 1);
+            minimumSize--;
             lastActivated = id;
         }
         if (totalNetworkRequests % 500000 == 0) disableInactive();
