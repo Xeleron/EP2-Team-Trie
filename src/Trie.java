@@ -83,6 +83,11 @@ public class Trie {
             else delete(node.ID, root);
     }
 
+    public void printSome(String x, long y) {
+        for (TrieNode node : toList(root))
+            if (node.ID.compareTo(x) < 0 && node.partialRequests <= y) System.out.println(node);
+    }
+
     public int getMinimumSize() {
         return minimumSize;
     }
@@ -105,5 +110,10 @@ public class Trie {
         private int totalRequests;
         private int partialRequests;
         private boolean used;
+
+        @Override
+        public String toString() {
+            return ID + ";" + totalRequests + ";" + partialRequests;
+        }
     }
 }
